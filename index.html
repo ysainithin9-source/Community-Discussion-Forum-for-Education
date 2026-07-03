@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community Forum</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f7fb;
+    margin:0;
+}
+
+nav{
+    background:#4f46e5;
+    color:white;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+nav h2{
+    margin-right:auto;
+}
+
+input{
+    padding:10px;
+}
+
+button{
+    padding:10px 15px;
+    border:none;
+    cursor:pointer;
+}
+
+.nav-btn{
+    background:white;
+    color:#4f46e5;
+    border-radius:5px;
+}
+
+.categories{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    text-align:center;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+.post{
+    background:white;
+    margin:15px;
+    padding:15px;
+    border-radius:10px;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.5);
+}
+
+.modal-content{
+    background:white;
+    width:300px;
+    margin:100px auto;
+    padding:20px;
+    border-radius:10px;
+}
+
+.modal-content input{
+    width:100%;
+    margin:8px 0;
+    box-sizing:border-box;
+}
+
+.close{
+    float:right;
+    cursor:pointer;
+    font-size:20px;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <h2>Community Forum</h2>
+
+    <button class="nav-btn" onclick="showLogin()">
+        Login
+    </button>
+
+    <button class="nav-btn" onclick="showRegister()">
+        Register
+    </button>
+
+    <input
+        type="text"
+        id="title"
+        placeholder="Discussion Title">
+
+    <button onclick="createPost()">
+        Post
+    </button>
+</nav>
+
+<section class="categories">
+    <div class="card">Web Development</div>
+    <div class="card">Mobile Apps</div>
+    <div class="card">Data Science</div>
+    <div class="card">AI & ML</div>
+    <div class="card">Career Advice</div>
+    <div class="card">General</div>
+</section>
+
+<h2 style="padding:20px;">Recent Discussions</h2>
+
+<div id="posts"></div>
+
+<!-- LOGIN -->
+<div class="modal" id="loginModal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+
+        <h3>Login</h3>
+
+        <input type="email" id="loginEmail"
+               placeholder="Email">
+
+        <input type="password" id="loginPassword"
+               placeholder="Password">
+
+        <button onclick="login()">Login</button>
+
+        <p id="loginMsg"></p>
+    </div>
+</div>
+
+<!-- REGISTER -->
+<div class="modal" id="registerModal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+
+        <h3>Register</h3>
+
+        <input type="text" id="regUser"
+               placeholder="Username">
+
+        <input type="email" id="regEmail"
+               placeholder="Email">
+
+        <input type="password" id="regPassword"
+               placeholder="Password">
+
+        <button onclick="registerUser()">
+            Register
+        </button>
+
+        <p id="registerMsg"></p>
+    </div>
+</div>
+
+<script>
+
+let users = [];
+let posts = [];
+
+function showLogin(){
+    document.getElementById("loginModal").style.display="block";
+}
+
+function showRegister(){
+    document.getElementById("registerModal").style.display="block";
+}
+
+function closeModal(){
+    document.getElementById("loginModal").style.display="none";
+    document.getElementById("registerModal").style.display="none";
+}
+
+function registerUser(){
+
+    let username =
+        document.getElementById("regUser").value;
+
+    let email =
+        document.getElementById("regEmail").value;
+
+    let password =
+        document.getElementById("regPassword").value;
+
+    users.push({
+        username,
+        email,
+        password
+    });
+
+    document.getElementById("registerMsg")
+        .innerText = "Registration Successful";
+}
+
+function login(){
+
+    let email =
+        document.getElementById("loginEmail").value;
+
+    let password =
+        document.getElementById("loginPassword").value;
+
+    let user = users.find(
+        u => u.email === email &&
+             u.password === password
+    );
+
+    if(user){
+
+        localStorage.setItem(
+            "user",
+            JSON.stringify(user)
+        );
+
+        document.getElementById("loginMsg")
+            .innerText = "Login Successful";
+
+        closeModal();
+
+    }else{
+
+        document.getElementById("loginMsg")
+            .innerText = "Invalid Credentials";
+    }
+}
+
+function createPost(){
+
+    let title =
+        document.getElementById("title").value;
+
+    if(title==="") return;
+
+    posts.push(title);
+
+    displayPosts();
+
+    document.getElementById("title").value="";
+}
+
+function displayPosts(){
+
+    let html="";
+
+    posts.forEach(post=>{
+
+        html += `
+        <div class="post">
+            <h3>${post}</h3>
+        </div>
+        `;
+    });
+
+    document.getElementById("posts").innerHTML = html;
+}
+
+</script>
+
+</body>
+</html>
